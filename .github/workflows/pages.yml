@@ -6,7 +6,7 @@ on:
     types: [published]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -20,20 +20,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Import initial source archive
-        if: ${{ hashFiles('package.json') == '' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh release download v0.2.0 --pattern Nihongo-GitHub-source.zip --dir /tmp/nihongo-import
-          unzip -q /tmp/nihongo-import/Nihongo-GitHub-source.zip -d /tmp/nihongo-source
-          cp -R /tmp/nihongo-source/. .
-          git config user.name "Nihongo Team"
-          git config user.email "159605836+Sultan12145@users.noreply.github.com"
-          git add .
-          git commit -m "Import Nihongo application source"
-          git push origin HEAD:main
+        with:
+          ref: main
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0
