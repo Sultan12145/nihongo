@@ -1,0 +1,24 @@
+appId: app.nihongo.study
+productName: Nihongo
+directories:
+  output: outputs/windows
+files:
+  - dist/**/*
+  - desktop/**/*
+  - package.json
+asar: true
+npmRebuild: false
+electronDist: node_modules/electron/dist
+win:
+  icon: desktop/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+  signAndEditExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  deleteAppDataOnUninstall: false
+artifactName: Nihongo-Setup-${version}.${ext}
