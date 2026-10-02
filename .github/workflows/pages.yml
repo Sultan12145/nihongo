@@ -1,0 +1,53 @@
+name: Publish Nihongo
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import initial source archive
+        if: ${{ hashFiles('package.json') == '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release download v0.2.0 --pattern Nihongo-GitHub-source.zip --dir /tmp/nihongo-import
+          unzip -q /tmp/nihongo-import/Nihongo-GitHub-source.zip -d /tmp/nihongo-source
+          cp -R /tmp/nihongo-source/. .
+          git config user.name "Nihongo Team"
+          git config user.email "159605836+Sultan12145@users.noreply.github.com"
+          git add .
+          git commit -m "Import Nihongo application source"
+          git push origin HEAD:main
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build
+      - run: node --test tests/release.test.mjs tests/pages.test.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
