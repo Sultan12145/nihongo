@@ -17,5 +17,5 @@ for(const plugin of ['app','filesystem','share'])if(!ios.file('native-plugins/'+
 if(!ios.file('ios/App/App/public/data/dictionary-manifest.json'))throw Error('iOS dictionary missing')
 await mkdir('outputs',{recursive:true})
 await writeFile('outputs/SHA256SUMS.txt',checksums.map(x=>`${x.sha256}  ${x.file.replace(/^outputs\//,'')}`).join('\n')+'\n')
-await writeFile('outputs/release-manifest.json',JSON.stringify({version:'0.2.0',android:{applicationId:'app.nihongo.study',versionCode:200,signerSha256:'c2c4e7df058730d953ae61364712600192917f309e0d049f5474a71a865d7372'},website:'https://nihongo-alpha.timommm.chatgpt.site',files:checksums},null,2))
+await writeFile('outputs/release-manifest.json',JSON.stringify({version:'0.2.0',android:{applicationId:'app.nihongo.study',versionCode:200,signerSha256:'c2c4e7df058730d953ae61364712600192917f309e0d049f5474a71a865d7372'},website:'https://sultan12145.github.io/nihongo/',files:checksums},null,2))
 console.log('Release integrity checked: APK assets, iOS dependencies, SHA256 checksums')
